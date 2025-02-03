@@ -1,0 +1,34 @@
+# Ignore Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore virtual environments
+venv/
+.env/
+.venv/
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore Git files (they are not needed in the Docker image)
+.git/
+.gitignore
+
+# Ignore logs and runtime files
+logs/
+*.log
+
+# Ignore editor-specific files
+.vscode/
+.idea/
+
+# Ignore local Docker-compose overrides (if any)
+docker-compose.override.yml
+docker-compose.local.yml
+
+# Exclude files
+samba-monitor.py
+smbstatus_listener.sh

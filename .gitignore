@@ -1,0 +1,27 @@
+# Byte-compiled and cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+.env
+
+# Log files
+*.log
+
+# Local development files
+*.sqlite3
+.DS_Store
+
+# Ignore Docker build artifacts
+docker-compose.override.yml
+
+# Node/npm files (if applicable)
+node_modules/
+npm-debug.log
+
+# VSCode and JetBrains IDE settings
+.vscode/
+.idea/

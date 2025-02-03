@@ -35,7 +35,7 @@ Ensure you have Python 3.10+ installed.
 
 ```sh
 # Clone the repository
-git clone https://github.com/yourusername/samba-monitor.git
+git clone https://github.com/milindpatel63/samba-monitor.git
 cd samba-monitor
 
 # Install dependencies
@@ -50,7 +50,9 @@ The application will start on `http://0.0.0.0:5069` by default.
 ### Running with Docker
 
 Since docker can't run smbstatus command on the host. So you'll have to use a script running on the host to pass output via a txt file inside docker.
+
 Put smbstatus_listener.sh somewhere on your host and run it with cron every minute.
+
 Make it executable
 ```
 chmod +x /path/to/smbstatus_listener.sh
@@ -105,6 +107,10 @@ docker-compose up -d
 
 ### GET `/refresh_data`
 Returns the latest parsed `smbstatus` output as JSON.
+
+### GET `/health`
+Returns a simple healthcheck.
+Can be used in something like Uptime Kuma for running a healthcheck.
 
 ### Web Dashboard
 Visit `http://localhost:5069/` to view the dashboard with active connections and notifications.
