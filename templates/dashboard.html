@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Samba Share Monitor</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f9; color: #333; }
+        .container { max-width: 1200px; margin: auto; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #444; }
+        .refresh { text-align: right; margin-bottom: 20px; }
+        .refresh button { background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+        .refresh button:hover { background-color: #0056b3; }
+        .section { margin: 20px 0; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #007bff; color: white; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+        .notification { background-color: #ffdddd; border-left: 6px solid #f44336; margin-bottom: 15px; padding: 10px 15px; }
+    </style>
+    <script>
+        // Auto-refresh every 15 seconds
+        setInterval(function() {
+            location.reload();
+        }, 15000);
+
+        // Manual refresh function to refresh only data
+        function manualRefresh() {
+            $.get('/refresh_data', function(data) {
+                // Update sessions table
+                $('#sessions').html('');
+                data.sessions.forEach(function(session) {
+                    $('#sessions').append(`<tr><td>${session.username}</td><td>${session.client}</td><td>${session.protocol}</td><td>${session.pid}</td></tr>`);
+                });
+
+                // Update services table
+                $('#services').html('');
+                data.services.forEach(function(service) {
+                    $('#services').append(`<tr><td>${service.service}</td><td>${service.machine}</td><td>${service.connected_at}</td><td>${service.encryption}</td></tr>`);
+                });
+
+                // Update locked files table
+                $('#locked_files').html('');
+                data.locked_files.forEach(function(file) {
+                    $('#locked_files').append(`<tr><td>${file.user}</td><td>${file.sharepath}</td><td>${file.name}</td><td>${file.time}</td></tr>`);
+                });
+            });
+        }
+    </script>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Samba Share Monitor</h1>
+        <div class="refresh">
+            <button onclick="manualRefresh()">Refresh Data</button>
+        </div>
+        
+        <div class="section">
+            <h3>Recent Notifications</h3>
+            <div id="notifications">
+                {% for notification in notifications %}
+                <div class="notification">
+                    <strong>{{ notification.time }}:</strong> {{ notification.message }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>Sessions</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Client</th>
+                        <th>Protocol</th>
+                        <th>PID</th>
+                    </tr>
+                </thead>
+                <tbody id="sessions">
+                    {% for session in data.sessions %}
+                    <tr>
+                        <td>{{ session.username }}</td>
+                        <td>{{ session.client }}</td>
+                        <td>{{ session.protocol }}</td>
+                        <td>{{ session.pid }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h3>Services</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Service</th>
+                        <th>Machine</th>
+                        <th>Connected At</th>
+                        <th>Encryption</th>
+                    </tr>
+                </thead>
+                <tbody id="services">
+                    {% for service in data.services %}
+                    <tr>
+                        <td>{{ service.service }}</td>
+                        <td>{{ service.machine }}</td>
+                        <td>{{ service.connected_at }}</td>
+                        <td>{{ service.encryption }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <h3>Locked Files</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Share Path</th>
+                        <th>File Name</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody id="locked_files">
+                    {% for file in data.locked_files %}
+                    <tr>
+                        <td>{{ file.user }}</td>
+                        <td>{{ file.sharepath }}</td>
+                        <td>{{ file.name }}</td>
+                        <td>{{ file.time }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</body>
+</html>
