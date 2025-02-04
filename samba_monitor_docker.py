@@ -141,9 +141,8 @@ def parse_smbstatus():
 def monitor_changes():
     global current_status, last_checked, notifications
     previous_clients = set()
-    
+    current_status = parse_smbstatus()  # Initialize with fresh data
     while True:
-        time.sleep(30)
         new_data = parse_smbstatus()
         current_clients = set(s['client'] for s in new_data['sessions'])
         
@@ -178,9 +177,11 @@ def monitor_changes():
         current_status = new_data
         previous_clients = current_clients
         last_checked = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        time.sleep(30)
 
 @app.route('/')
 def dashboard():
+    current_status = parse_smbstatus()
     return render_template(
         'dashboard.html',
         data=current_status,
@@ -196,9 +197,3 @@ def refresh_data():
 @app.route('/health', methods=['GET'])
 def health():
     return jsonify({"status": "ok"}), 200
-
-if __name__ == '__main__':
-    current_status = parse_smbstatus()
-    monitor_thread = threading.Thread(target=monitor_changes, daemon=True)
-    monitor_thread.start()
-    app.run(host='0.0.0.0', port=FLASK_PORT)

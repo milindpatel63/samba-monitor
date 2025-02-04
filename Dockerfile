@@ -29,4 +29,4 @@ ENV FLASK_PORT=5069
 EXPOSE $FLASK_PORT
 
 # Use shell form of CMD to allow environment variables to be substituted
-CMD gunicorn -b "0.0.0.0:$FLASK_PORT" samba_monitor_docker:app
+CMD gunicorn -b "0.0.0.0:$FLASK_PORT" --config gunicorn_conf.py --workers 1 samba_monitor_docker:app
