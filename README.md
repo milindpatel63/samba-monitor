@@ -66,8 +66,8 @@ Cron command
 ```sh
 docker run -d \
   -e FLASK_PORT=5069 \
-  -e DISCORD_WEBHOOK_URL="your_webhook_url" \
-  -e EXCLUDED_IPS="192.168.1.1,192.168.1.2" \
+  -e DISCORD_WEBHOOK_URL=your_webhook_url \
+  -e EXCLUDED_IPS=192.168.1.1,192.168.1.2 \
   -p 5069:5069 \
   -v /tmp/smbstatus_output.txt:/tmp/smbstatus_output.txt \
   --name samba-monitor \
@@ -85,9 +85,9 @@ services:
     ports:
       - "5069:5069"
     environment:
-      FLASK_PORT: 5069
-      DISCORD_WEBHOOK_URL: "your_webhook_url"
-      EXCLUDED_IPS: "192.168.1.1,192.168.1.2"
+      - FLASK_PORT=5069
+      - DISCORD_WEBHOOK_URL=your_webhook_url
+      - EXCLUDED_IPS=192.168.1.1,192.168.1.2
     volumes:
       - /tmp/smbstatus_output.txt:/tmp/smbstatus_output.txt
     restart: unless-stopped

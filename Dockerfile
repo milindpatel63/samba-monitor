@@ -1,10 +1,11 @@
 # Use an official Python runtime as a parent image.
 FROM python:3.10-slim
 
-# Install system dependencies: samba-client (for smbstatus) and sudo.
+# Install system dependencies: samba-client (for smbstatus), sudo, and curl.
 RUN apt-get update && apt-get install -y \
     samba-client \
     sudo \
+    curl \
  && rm -rf /var/lib/apt/lists/*
 
 # Set work directory
@@ -27,5 +28,5 @@ ENV FLASK_PORT=5069
 # Expose the port dynamically
 EXPOSE $FLASK_PORT
 
-# Use exec form of CMD to allow environment variables to be substituted
-CMD ["sh", "-c", "python samba_monitor_docker.py"]
+# Use Gunicorn to serve the Flask app in production
+CMD ["gunicorn", "-b", "0.0.0.0:$FLASK_PORT", "samba_monitor_docker:app"]
