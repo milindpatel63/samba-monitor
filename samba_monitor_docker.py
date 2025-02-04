@@ -143,7 +143,7 @@ def monitor_changes():
     previous_clients = set()
     
     while True:
-        time.sleep(10)
+        time.sleep(30)
         new_data = parse_smbstatus()
         current_clients = set(s['client'] for s in new_data['sessions'])
         

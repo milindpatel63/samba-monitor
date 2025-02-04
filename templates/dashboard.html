@@ -23,11 +23,6 @@
         .notification { background-color: #ffdddd; border-left: 6px solid #f44336; margin-bottom: 15px; padding: 10px 15px; }
     </style>
     <script>
-        // Auto-refresh every 15 seconds
-        setInterval(function() {
-            location.reload();
-        }, 15000);
-
         // Manual refresh function to refresh only data
         function manualRefresh() {
             $.get('/refresh_data', function(data) {
