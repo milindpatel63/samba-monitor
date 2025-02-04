@@ -28,5 +28,5 @@ ENV FLASK_PORT=5069
 # Expose the port dynamically
 EXPOSE $FLASK_PORT
 
-# Use Gunicorn to serve the Flask app in production
-CMD ["gunicorn", "-b", "0.0.0.0:$FLASK_PORT", "samba_monitor_docker:app"]
+# Use shell form of CMD to allow environment variables to be substituted
+CMD gunicorn -b "0.0.0.0:$FLASK_PORT" samba_monitor_docker:app
