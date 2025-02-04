@@ -32,3 +32,4 @@ docker-compose.local.yml
 # Exclude files
 samba-monitor.py
 smbstatus_listener.sh
+sambasharemonitor.jpeg

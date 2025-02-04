@@ -2,6 +2,8 @@
 
 This is a Flask-based web application that monitors Samba (SMB) connections using `smbstatus` and sends notifications to a Discord webhook when a new client connects. It also provides a simple web dashboard to display active sessions, services, and locked files.
 
+![Screenshot.](/sambasharemonitor.jpeg)
+
 ## Features
 - Monitors active Samba connections using `smbstatus`.
 - Sends notifications to Discord when a new client connects.
