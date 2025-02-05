@@ -33,6 +33,9 @@ def send_ntfy_notification(message):
 
 def send_discord_notification(message):
     """Sends a message to Discord via webhook."""
+    if not DISCORD_WEBHOOK_URL:
+        print("DISCORD_WEBHOOK_URL is not set. Skipping discord notification.")
+        return
     payload = {
         "content": message
     }

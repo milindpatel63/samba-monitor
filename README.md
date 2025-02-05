@@ -1,12 +1,12 @@
 # Samba Connection Monitor
 
-This is a Flask-based web application that monitors Samba (SMB) connections using `smbstatus` and sends notifications to a Discord webhook when a new client connects. It also provides a simple web dashboard to display active sessions, services, and locked files.
+This is a Flask-based web application that monitors Samba (SMB) connections using `smbstatus` and sends notifications to Discord and/or ntfy when a new client connects. It also provides a simple web dashboard to display active sessions, services, and locked files.
 
 ![Screenshot.](/sambasharemonitor.jpeg)
 
 ## Features
 - Monitors active Samba connections using `smbstatus`.
-- Sends notifications to Discord when a new client connects.
+- Sends notifications to Discord and/or ntfy when a new client connects.
 - Displays session details, services, and locked files in a web dashboard.
 - Allows configuration via environment variables.
 - Runs inside a Docker container.
@@ -14,7 +14,8 @@ This is a Flask-based web application that monitors Samba (SMB) connections usin
 ## Environment Variables
 | Variable          | Description                                  | Default |
 |------------------|----------------------------------|---------|
-| `DISCORD_WEBHOOK_URL` | Discord webhook URL for notifications | _Required_ |
+| `DISCORD_WEBHOOK_URL` | Discord webhook URL for notifications (optional) | `""` (empty) |
+| `NTFY_TOPIC_URL` | ntfy topic URL for notifications (optional) | `""` (empty) |
 | `EXCLUDED_IPS`   | Comma-separated list of IPs to exclude from notifications | `""` (empty) |
 | `FLASK_PORT`     | Port for the Flask web server | `5069` |
 
@@ -44,10 +45,12 @@ cd samba-monitor
 pip install -r requirements.txt
 
 # Run the application
-FLASK_PORT=5069 DISCORD_WEBHOOK_URL="your_webhook_url" EXCLUDED_IPS="192.168.1.1,192.168.1.2" python samba_monitor.py
+FLASK_PORT=5069 DISCORD_WEBHOOK_URL="your_webhook_url" NTFY_TOPIC_URL="https://ntfy.sh/mytopic" EXCLUDED_IPS="192.168.1.1,192.168.1.2" python samba_monitor.py
 ```
 
 The application will start on `http://0.0.0.0:5069` by default.
+
+Note: The application checks for new connections every 30 seconds by default. To change this interval, modify the `time.sleep(30)` value in line 192 of `samba_monitor.py`.
 
 ### Running with Docker
 
@@ -69,12 +72,18 @@ Cron command
 docker run -d \
   -e FLASK_PORT=5069 \
   -e DISCORD_WEBHOOK_URL=your_webhook_url \
+  -e NTFY_TOPIC_URL=https://ntfy.sh/mytopic \
   -e EXCLUDED_IPS=192.168.1.1,192.168.1.2 \
   -p 5069:5069 \
   -v /tmp/smbstatus_output.txt:/tmp/smbstatus_output.txt \
   --name samba-monitor \
   milindpatel63/samba-monitor:latest
 ```
+Note:
+
+    The Docker container checks for updates based on the interval set in samba_monitor_docker.py (line 194). Modify this value to adjust how often the app refreshes its data and sends notifications.
+
+    The actual data from smbstatus is updated according to the cron schedule (every minute by default). Ensure the cron job's interval aligns with your desired data refresh rate.
 
 ### Docker Compose
 Create a `docker-compose.yml` file:
@@ -89,6 +98,7 @@ services:
     environment:
       - FLASK_PORT=5069
       - DISCORD_WEBHOOK_URL=your_webhook_url
+      - NTFY_TOPIC_URL=https://ntfy.sh/mytopic  # Optional
       - EXCLUDED_IPS=192.168.1.1,192.168.1.2
     volumes:
       - /tmp/smbstatus_output.txt:/tmp/smbstatus_output.txt
