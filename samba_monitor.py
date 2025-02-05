@@ -14,9 +14,22 @@ current_status = {'sessions': [], 'services': [], 'locked_files': []}
 # Get values from environment variables
 # Discord webhook URL
 DISCORD_WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL", "")
+# Get ntfy topic URL from environment variables
+NTFY_TOPIC_URL = os.getenv("NTFY_TOPIC_URL", "")
 # List of IPs to exclude from notifications
 EXCLUDED_IPS = os.getenv("EXCLUDED_IPS", "").split(",")
 FLASK_PORT = int(os.getenv("FLASK_PORT", 5069))
+
+def send_ntfy_notification(message):
+    """Sends a message to ntfy."""
+    if not NTFY_TOPIC_URL:
+        print("NTFY_TOPIC_URL is not set. Skipping ntfy notification.")
+        return
+    try:
+        response = requests.post(NTFY_TOPIC_URL, data=message.encode('utf-8'))
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print(f"Error sending notification to ntfy: {e}")
 
 def send_discord_notification(message):
     """Sends a message to Discord via webhook."""
@@ -170,6 +183,7 @@ def monitor_changes():
                                f"Username: {session_username}\n"
                                f"Service: {service_name}\n"
                                f"Locked files: {locked_file_names}")
+                    send_ntfy_notification(message)
                     # Send notification to Discord
                     send_discord_notification(message)
         current_status = new_data
