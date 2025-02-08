@@ -5,7 +5,7 @@ on:
     branches:
       - main
     tags:
-      - "v*.*.*"  # Match semantic version tags like v1.0.0
+      - "v*.*.*"  # Match version tags like v1.0.0
   workflow_dispatch:
 
 jobs:
@@ -25,9 +25,15 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Extract Git tag version
+      - name: Determine Docker Image Tags
         id: get_version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/}
+            echo "TAGS=milindpatel63/samba-monitor:${VERSION},milindpatel63/samba-monitor:latest" >> $GITHUB_ENV
+          else
+            echo "TAGS=milindpatel63/samba-monitor:latest" >> $GITHUB_ENV
+          fi
 
       - name: Build and push multi-arch Docker image
         uses: docker/build-push-action@v5
@@ -36,6 +42,4 @@ jobs:
           file: ./Dockerfile
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: |
-            milindpatel63/samba-monitor:latest
-            milindpatel63/samba-monitor:${{ env.VERSION }}
+          tags: ${{ env.TAGS }}
