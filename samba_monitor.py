@@ -57,7 +57,7 @@ def parse_smbstatus():
         print("Error running smbstatus:", e)
         return {'sessions': [], 'services': [], 'locked_files': []}
 
-    output = result.splitlines()
+    output = result.stdout.splitlines()
     data = {'sessions': [], 'services': [], 'locked_files': []}
     current_section = None
 
